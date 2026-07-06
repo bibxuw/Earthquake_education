@@ -10,8 +10,8 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+  history: createWebHistory('/Earthquake_education/'),
+  routes
 });
 
 export default router;
