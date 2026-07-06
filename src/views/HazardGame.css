@@ -1,0 +1,400 @@
+/* src/views/HazardGame.css */
+.hazard-page {
+  width: 100vw;
+  height: 100vh;
+  /* 这一行确保了 padding 不会撑大容器，从而避免滚动条 */
+  box-sizing: border-box; 
+  padding: 0 10px 10px 10px; 
+  /* 设置你要求的背景 */
+  background: url('../assets/backgrounds.png') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden; /* 彻底切断任何滚动可能 */
+}
+
+.game-container {
+  flex: 0.99;
+  display: flex;
+  gap: 20px;
+  padding: 0 20px;
+  min-height: 0; 
+  overflow: hidden;
+}
+
+/* ================= 教室画布区域 ================= */
+.classroom-board {
+  flex: 7; /* 占 70% 宽度 */
+  position: relative;
+  background: white;
+  border-radius: 20px;
+  border: 2px solid #cbd5e1;
+  box-shadow: 0 10px 25px rgba(29, 53, 87, 0.1);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.classroom-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 保证图片铺满且不变形 */
+}
+
+/* ================= 隐形热区核心逻辑 ================= */
+.drop-zone {
+  position: absolute;
+  /* 开发阶段可以解开下面这行的注释，变成半透明红色，方便你调位置 */
+  /* background: rgba(255, 0, 0, 0.3); */ 
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+/* 当物品被成功找出的样式 */
+.drop-zone.is-found {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: #1D3557;
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.status-badge {
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* ⚠️ 关键步骤：你需要根据你实际的“教室背景图”调整下面这四个热区的 top, left, width, height 的百分比！
+*/
+.lamp { top: 10%; left: 40%; width: 20%; height: 15%; }
+.window { top: 30%; left: 75%; width: 15%; height: 40%; }
+.bookcase { top: 25%; left: 10%; width: 15%; height: 45%; }
+.pillar { top: 70%; left: 40%; width: 20%; height: 25%; }
+
+/* ================= 右侧边栏 ================= */
+.sidebar-panel {
+  flex: 3; /* 增加宽度，使其占据更多空间 */
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* 两个卡片之间的间隙 */
+  padding: 5px;
+  background: #ffffff; /* 给整个侧边栏一个浅灰底色，突出层级 */
+   border: 2px dashed transparent;
+  border-radius: 8px;
+}
+
+.status-card {
+  flex: 1; /* 平分侧边栏高度 */
+  border: 2px dashed #cbd5e1;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 15px;
+  margin-bottom: 12px; /* 移除可能的 margin，依靠 gap 控制 */
+  box-sizing: border-box;
+}
+.status-card:last-child {
+  margin-bottom: 0;
+}
+.status-sections {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* 移除 gap，直接用 margin-bottom */
+}
+.danger-section { 
+  border-left: 8px solid #e74c3c; 
+  background-color: #fff5f5; /* 危险区微微泛红 */
+}
+
+.safe-section { 
+  border-left: 8px solid #2ecc71; 
+  background-color: #f0fff4; /* 安全区微微泛绿 */
+}
+/* 确保每个卡片块不受意外布局干扰 */
+.danger-section, 
+.safe-section {
+  flex: 1; /* 均分空间 */
+  display: flex;
+  flex-direction: column;
+}
+/* 确保标题位置 */
+.status-card h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #334155;
+}
+.progress-header h3 {
+  font-size: 1.4rem;        /* 增大字号，根据需要可调整为 1.5rem 或 1.6rem */
+  color: #1e293b;
+  margin: 0;                /* 移除外边距 */
+  padding-bottom: 5px;      /* 这里控制它与下方卡片的距离 */
+}
+
+/* 修改后的列表容器布局 */
+.list-grid {
+  display: flex;
+  flex-direction: column; /* 核心修改：改为垂直纵向排列 */
+  gap: 8px;              /* 每一行之间的间距 */
+  margin-top: 8px;
+}
+
+/* 确保每个 pill 占据整行空间 */
+.item-pill {
+  font-size: 1.25rem;
+  padding: 4px 8px;     /* 稍微增加内边距，让点击区域更舒适 */
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.6); /* 半透明白色背景 */
+  margin-bottom: 5px; 
+  font-size: 0.9rem;
+  color: #666;
+  width: 100%;           /* 强制 pill 宽度占满父容器 */
+  box-sizing: border-box; /* 确保 padding 不会撑出容器宽度 */
+  text-align: left;      /* 文字左对齐 */
+  transition: all 0.2s;
+}
+
+.item-pill.active {
+  font-size: 1.25rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #94a3b8;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.victory-card {
+  background: linear-gradient(135deg, #fef08a, #fde047);
+  color: #a16207;
+  padding: 20px;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  animation: bounceIn 0.5s ease-out;
+}
+
+
+/* ================= 专属反馈弹窗样式 ================= */
+.feedback-dialog {
+  padding: 30px 40px;
+  border-radius: 20px;
+  width: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.danger-style {
+  background: #fef2f2;
+  border: 2px solid #fca5a5;
+  color: #991b1b;
+}
+
+.safe-style {
+  background: #f0fdf4;
+  border: 2px solid #86efac;
+  color: #166534;
+}
+
+.feedback-title { margin: 0; font-size: 1.5rem; font-weight: 900; }
+.feedback-msg { font-size: 1.15rem; line-height: 1.6; margin: 0; }
+
+/* ================= 底部操作区 ================= */
+/* ================= 底部操作区 ================= */
+
+/* 1. 彻底锁定底部容器，强制内容聚拢在正中间 */
+.bottom-action {
+  display: flex;
+  justify-content: center !important; /* 强制所有内容在屏幕正中间 */
+  align-items: center;
+  gap: 40px;               /* 按钮之间的间距，保持呼吸感 */
+  padding: 15px 40px;
+  width: 100%;             /* 占满整个屏幕的宽度 */
+  box-sizing: border-box;
+  flex-shrink: 0;          /* 防止高度在小屏幕上被压缩 */
+  margin-top: auto;        /* 始终被推到页面最底部 */
+  min-height: 100px;
+}
+
+/* 2. 终极护盾：强制所有子元素（无论是按钮还是组件）死死锁在 200px */
+.bottom-action > * {
+  flex: 0 0 200px !important;  /* 核心修复：不放大，不缩小，就锁死 200px */
+  max-width: 200px !important; /* 防止内部文字撑破盒子 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* 3. 约束按钮本身的文字和样式 */
+.bottom-action button,
+.bottom-action .knowledge-btn,
+.game-action-btn {
+  width: 100%;               /* 乖乖待在 200px 的盒子里 */
+  padding: 14px 0;           /* 靠垂直 padding 撑起高度 */
+  font-size: 1.15rem;
+  font-weight: bold;
+  border-radius: 12px;
+  text-align: center;
+  white-space: nowrap;       /* 保证一行显示 */
+  border: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* 如果你的 KnowledgeInteraction 组件还有外壳 */
+.knowledge-wrapper {
+  width: 100%;
+}
+
+.game-action-btn {
+  /* 假设科普按钮的类名为 .knowledge-btn，直接复用其样式属性 */
+  /* 如果你不确定具体类名，请查看 KnowledgeInteraction 组件的内部代码 */
+  padding: 14px 20px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  /* 保持统一的阴影效果 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+/* 重新开始：清爽蓝 */
+.reset-btn { background: #f39c12; color: white; }
+.reset-btn:hover {
+  transform: translateY(-2px);
+  /* 阴影颜色与橙色背景呼应 */
+  box-shadow: 0 6px 18px rgba(243, 156, 18, 0.5); 
+}
+
+/* 游戏提示：温馨橙 */
+.hint-btn { background: #3498db; color: white; }
+.hint-btn:hover {
+  transform: translateY(-2px);
+  /* 阴影颜色与蓝色背景呼应 */
+  box-shadow: 0 6px 18px rgba(52, 152, 219, 0.5); 
+}
+
+/* 调整 KnowledgeInteraction 的样式以匹配 */
+.bottom-action .knowledge-btn { 
+  background: #2ecc71; 
+  color: white; 
+  border-radius: 25px;
+  padding: 12px 24px;
+}
+
+/* ================= 交互区域与安全帽 ================= */
+.interactive-zone {
+  position: absolute;
+  /* 这里你需要根据实际图片比例给每个 target.id 写 top 和 left，例如：
+  &.window { top: 30%; left: 80%; width: 50px; height: 50px; } */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* 发现目标后的反馈区域（可选：加个淡背景光晕） */
+.interactive-zone.is-found {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+.feedback-icon {
+  font-size: 3rem; /* 图标放大点 */
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+.hardhat-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+
+/* 安全帽弹出的动画 */
+.pop-enter-active {
+  animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ================= 通关喝彩弹窗 ================= */
+.success-modal-overlay {
+  position: fixed!important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.success-modal {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  border: 2px solid #fbbf24;
+}
+
+.success-modal .trophy {
+  font-size: 5rem;
+  margin-bottom: 10px;
+  animation: bounce 1s infinite alternate;
+}
+
+.success-modal h2 {
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.success-modal p {
+  color: #64748b;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.continue-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+  transition: transform 0.2s;
+}
+
+.continue-btn:hover {
+  transform: scale(1.05);
+}
+
+/* 弹窗淡入淡出 */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}

@@ -1,0 +1,485 @@
+/* src/views/BusInertia.css */
+
+/* 1. 全屏无滚动页面容器 */
+.action-page {
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box; 
+  padding: 0 10px 10px 10px; 
+  background: url('../assets/backgrounds.png') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow: hidden; 
+}
+
+/* 2. 主体区排版 (Flexbox 7:3 比例) */
+.action-container {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  padding: 0 20px;
+  min-height: 0; 
+  overflow: hidden;
+}
+
+/* 复用玻璃卡片样式 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  border: 2px solid #cbd5e1;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(29, 53, 87, 0.1);
+}
+
+/* 左侧画布区 */
+.simulation-board {
+  flex: 7; /* 占 70% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* 占位画布风格 (后续放图片或Canvas) */
+.canvas-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #f8fafc;
+  border: 3px dashed #94a3b8;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.demo-tag {
+  font-size: 1.5rem;
+  color: #64748b;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+/* 右侧控制台 */
+.control-panel {
+  flex: 3; /* 占 30% */
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  gap: 10px;
+}
+.settings-section, .monitor-section {
+  flex: 1; /* 平分空间 */
+  min-height: 120px;
+}
+
+.report-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.panel-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1e293b;
+  font-weight: 900;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+/* 互动控件组 */
+.slider-group label {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #475569;
+  display: block;
+  margin-bottom: 5px;
+}
+.slider-group {
+  width: 100%;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 标签与数值对齐 */
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.slider-value {
+  color: #3b82f6; /* 使用品牌蓝 */
+  font-family: 'Courier New', monospace; /* 数字字体更易读 */
+}
+
+/* 参数标签样式 */
+.param-label {
+  font-size: 0.95rem;
+  color: #475569;
+  font-weight: 700;
+}
+
+/* 数值字体美化 */
+.param-value {
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums; /* 等宽字体，防止数值跳动 */
+}
+
+.param-value small {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: normal;
+}
+
+/* 滑动条轨道全宽包裹层 */
+.slider-track-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.limit-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: bold;
+  min-width: 10px;
+  text-align: center;
+}
+
+/* 滑动条轨道样式优化 */
+.custom-slider {
+  flex: 1; /* 自动占据剩余空间 */
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  appearance: none;
+}
+
+/* 轨道进度颜色 (使用 CSS 变量实现动态效果可选) */
+.custom-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border: 4px solid #3b82f6;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+}
+
+.custom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #3b82f6;
+}
+
+.blue-bold-label {
+  color: #2563eb !important; /* 强制覆盖 */
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
+  letter-spacing: 0.5px;   /* 增加一点字间距，看起来更精致 */
+  transition: color 0.3s ease;
+}
+
+
+.range-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #64748b;
+  font-weight: bold;
+}
+
+/* 借用我们之前在全局写好的美化 slider */
+.custom-slider {
+  flex: 1;
+  height: 8px;
+  background: #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+  accent-color: #3b82f6; 
+}
+
+/* 按钮样式 */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  margin-top: 5px;
+}
+.primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5); }
+
+.secondary-btn {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.secondary-btn:hover { background: #e2e8f0; color: #1e293b; }
+
+/* 状态提示框 */
+.status-box {
+  margin-top: auto;
+  padding: 15px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  color: #166534;
+  font-size: 1.1rem;
+}
+.warning-status {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #991b1b;
+  animation: pulse-warn 1s infinite alternate;
+}
+
+@keyframes pulse-warn {
+  from { box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
+  to { box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+}
+
+/* 底部区域 */
+/* ================= 底部操作区（组件3 锁死居中版） ================= */
+
+/* 1. 彻底锁定底部底座，强制内容在屏幕水平正中央聚拢 */
+.bottom-action {
+  display: flex;
+  justify-content: center !important; /* 强制所有子按钮在屏幕正中间靠齐 */
+  align-items: center;
+  gap: 40px;               /* 按钮之间的固定物理距离，绝不随屏幕拉伸 */
+  padding: 15px 40px;
+  width: 100%;             /* 强行占满整个屏幕的物理宽度 */
+  box-sizing: border-box;
+  flex-shrink: 0;          /* 屏幕再矮，也绝对禁止压缩底部区域的高度 */
+  margin-top: auto;        /* 依靠弹性流自动把底部栏推到视口最下方 */
+  min-height: 100px;
+}
+
+/* 2. 强行把按钮格子的宽度锁死在 200px，防止初始渲染时宽度为 0 导致挤压 */
+.bottom-action > * {
+  flex: 0 0 200px !important;  /* 固定的宽度格子：不放大、不缩小、不漂移 */
+  max-width: 200px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* 3. 让真实的按钮撑满这 200px 空间，保持视觉高度统一 */
+.bottom-action button,
+.bottom-action .primary-btn,
+.bottom-action .secondary-btn {
+  width: 100% !important;    /* 填满分配的 200px 格子 */
+  padding: 14px 0 !important; /* 用垂直 padding 代替原本的固定宽高，手感更舒适 */
+  font-size: 1.15rem;
+  font-weight: bold;
+  border-radius: 12px;
+  text-align: center;
+  white-space: nowrap;       /* 绝对不换行 */
+  box-sizing: border-box;
+  border: none;
+  cursor: pointer;
+}
+/* 人群容器 */
+.people-container {
+  display: flex;
+  gap: 10px;
+  transition: transform 0.5s ease-out;
+}
+
+/* 小球样式 */
+.person-dot {
+  width: 20px;
+  height: 20px;
+  background: #3b82f6;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+/* 惯性冲击动画 */
+.shake-animation {
+  animation: inertia-jolt 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+}
+
+@keyframes inertia-jolt {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(80px); /* 模拟急刹车身体前倾 */ }
+  100% { transform: translateX(0); }
+}
+
+/* 修改监控区域样式 */
+.monitor-wrapper {
+  margin-top: 3px;
+  width: 100%;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 强制图表区域高度 */
+#chart-container {
+  width: 100%;
+  height: 200px !important; /* 这里将高度从 250px 增加到 280px */
+  margin-top: 10px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 400px; /* 根据你的图片比例设置 */
+}
+
+.bus-bg {
+  position: absolute;
+  margin-top: -90px;
+  margin-left: -20px;
+  width: 105%;
+  height: 150%;
+  z-index: 1; /* 底图在下 */
+}
+
+.bus-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2; /* 画布在上 */
+}
+
+
+/* 三宫格参数 */
+.report-params {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.param-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.param-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 5px;
+}
+
+.param-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* 浅蓝色公式区 */
+.formula-box {
+  background-color: #e0f2fe;
+  border-left: 4px solid #3b82f6;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.formula-title {
+  font-weight: 900;
+  color: #0369a1;
+  margin-bottom: 5px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.1rem;
+}
+
+.formula-desc {
+  font-size: 0.75rem;
+  color: #0284c7;
+}
+
+/* 结果得分区 */
+.report-results {
+  background: #f1f5f9;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #334155;
+  margin-bottom: 10px;
+}
+
+.result-row:last-child {
+  margin-bottom: 0;
+}
+
+.result-num {
+  font-size: 1.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  color: #10b981; /* 默认绿色 */
+}
+
+.danger-text {
+  color: #ef4444; /* 惯性力使用红色警示 */
+}
+
+.param-val-large {
+  font-size: 1.75rem !important; /* 显著轰炸式放大字体 */
+  font-weight: 900 !important;   /* 极限加粗，极具数据存在感 */
+  color: #0f172a !important;     /* 深邃墨黑色 */
+  font-family: 'Courier New', Courier, monospace;
+  margin-top: 4px;
+  display: block;
+}
+
+.param-val-large small {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-left: 2px;
+}
